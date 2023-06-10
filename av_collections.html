@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+        
+        h1 {
+            color: #333;
+            font-size: 28px;
+        }
+        
+        div {
+            margin-top: 20px;
+        }
+        
+        button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin-right: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        button a {
+            color: white;
+            text-decoration: none;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        #renderDetails {
+      text-align: left;
+      margin-top: 20px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      background-color: #f7f7f7;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+      white-space: pre-wrap;
+        }
+
+        .json-key {
+      color: blue;
+    }
+
+    .json-string {
+      color: green;
+    }
+
+    .json-number {
+      color: orange;
+    }
+
+    .json-boolean {
+      color: purple;
+    }
+
+    .json-null {
+      color: red;
+    }
+
+    pre{
+        overflow-x: auto;
+    }
+        
+    </style>
+</head>
+<body>
+    <h1>AlgoVizz Collection</h1>
+    <button id="fetchButton" class="button">Feedbacks and suggestions</button>
+    <div id="renderDetails"></div>
+    <script>
+        document.getElementById('fetchButton').addEventListener('click', fetchData1);
+        async function fetchData1() {
+        const response = await fetch('https://edu-world-backend.vercel.app/algovizz-db/contact');
+        const data = await response.json();
+        renderData(data, 'fetchButton');
+      }
+      function renderData(data, buttonId) {
+        const renderDetails = document.getElementById('renderDetails');
+        renderDetails.innerHTML = '';
+  
+        const details = document.createElement('pre');
+        details.innerHTML = syntaxHighlight(JSON.stringify(data, null, 2));
+  
+        renderDetails.appendChild(details);
+      }
+      function syntaxHighlight(json) {
+      json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      return json.replace(
+        /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+-]?\d+)?)/g,
+        function (match) {
+          let className = 'json-number';
+          if (/^"/.test(match)) {
+            if (/:$/.test(match)) {
+              className = 'json-key';
+            } else {
+              className = 'json-string';
+            }
+          } else if (/true|false/.test(match)) {
+            className = 'json-boolean';
+          } else if (/null/.test(match)) {
+            className = 'json-null';
+          }
+          return '<span class="' + className + '">' + match + '</span>';
+        }
+      );
+    }
+    </script>
+</body>
+
+</html>
